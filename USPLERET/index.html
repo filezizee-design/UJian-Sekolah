@@ -1,1 +1,666 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UJIAN SEKOLAH SMKN 1 PLERET 2026/2027</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#095078',
+                            800: '#0c4a6e',
+                            900: '#0f3a55',
+                        },
+                        accent: {
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
 
+    <!-- Header Navigation -->
+    <header class="bg-gradient-to-r from-brand-900 via-brand-800 to-brand-900 text-white shadow-lg sticky top-0 z-30">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-white/10 backdrop-blur border border-white/20 flex items-center justify-center text-accent-500 text-xl font-bold shadow-inner">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm sm:text-base font-bold tracking-tight text-white uppercase leading-tight">SMKN 1 PLERET</h1>
+                    <p class="text-xs text-brand-100/80 font-medium">Portal Ujian Sekolah 2026/2027</p>
+                </div>
+            </div>
+            
+            <!-- Admin Toggle Button -->
+            <button id="adminToggleBtn" onclick="openAdminAuth()" class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-xl border border-white/20 backdrop-blur transition-all duration-200 shadow-sm active:scale-95">
+                <i class="fa-solid fa-user-shield text-accent-500"></i>
+                <span id="adminBtnText" class="hidden sm:inline">Mode Admin</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section & Date/Time Widget -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8">
+        
+        <!-- Header Banner Card -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-700 via-brand-800 to-slate-900 text-white p-6 sm:p-8 shadow-xl">
+            <!-- Background Decorative Elements -->
+            <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute right-1/3 -top-10 w-40 h-40 bg-accent-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                <div>
+                    <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-accent-500/20 text-accent-500 border border-accent-500/30 mb-3">
+                        Tahun Ajaran 2026/2027
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white mb-2">
+                        UJIAN SEKOLAH SMKN 1 PLERET
+                    </h2>
+                    <p class="text-brand-100/90 text-sm sm:text-base max-w-xl">
+                        Silakan pilih jadwal dan mata pelajaran ujian sesuai dengan sesi yang sedang berlangsung.
+                    </p>
+                </div>
+
+                <!-- Clock & Date Widget Card -->
+                <div class="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 sm:p-5 text-center min-w-[220px] shadow-inner flex flex-col justify-center">
+                    <div class="text-xs uppercase tracking-wider text-brand-100/80 font-semibold mb-1" id="dayWidget">
+                        ---, -- -------- ----
+                    </div>
+                    <div class="text-3xl sm:text-4xl font-black font-mono tracking-wider text-white" id="clockWidget">
+                        00:00:00
+                    </div>
+                    <div class="text-[11px] text-accent-500 font-medium mt-1">
+                        <i class="fa-solid fa-circle text-[8px] animate-pulse mr-1"></i> Waktu Indonesia Barat (WIB)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- USER VIEW SECTION -->
+        <section id="userSection" class="space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-calendar-check text-brand-600 text-xl"></i>
+                    <h3 class="text-lg font-bold text-slate-800">Jadwal Sesi Ujian Hari Ini</h3>
+                </div>
+                <span id="activeSubjectCount" class="bg-brand-100 text-brand-800 text-xs font-semibold px-3 py-1 rounded-full">
+                    0 Mata Pelajaran Aktif
+                </span>
+            </div>
+
+            <!-- Subject Cards Container -->
+            <div id="subjectGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Dynamic cards will be rendered here via JS -->
+            </div>
+
+            <!-- Empty State Message -->
+            <div id="emptyState" class="hidden text-center py-12 px-4 bg-white rounded-2xl border border-slate-200 shadow-sm">
+                <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                    <i class="fa-solid fa-folder-open"></i>
+                </div>
+                <h4 class="text-base font-semibold text-slate-700 mb-1">Belum Ada Sesi Ujian Aktif</h4>
+                <p class="text-sm text-slate-500 max-w-md mx-auto">Saat ini belum ada link ujian yang diaktifkan oleh admin. Silakan tunggu informasi resmi dari pengawas atau panitia ujian.</p>
+            </div>
+        </section>
+
+        <!-- ADMIN PANEL SECTION (Hidden by default) -->
+        <section id="adminSection" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm space-y-6">
+                <!-- Admin Header & Logout -->
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="bg-red-100 text-red-700 text-xs px-2.5 py-0.5 rounded-full font-semibold">Panel Kontrol Admin</span>
+                            <h3 class="text-xl font-bold text-slate-800">Kelola Sesi & Link Ujian</h3>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">Atur link Google Form dan beri tanda centang pada sesi (Sesi 1 / Sesi 2) yang ingin ditampilkan ke siswa.</p>
+                    </div>
+                    <button onclick="logoutAdmin()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold px-4 py-2 rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-right-from-bracket"></i> Keluar Admin
+                    </button>
+                </div>
+
+                <!-- Form Add / Edit Subject & Sessions -->
+                <form id="subjectForm" onsubmit="handleFormSubmit(event)" class="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 space-y-5">
+                    <input type="hidden" id="editIndex" value="-1">
+                    <h4 id="formTitle" class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-plus-circle text-brand-600"></i> Tambah Mata Pelajaran Baru
+                    </h4>
+                    
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Mata Pelajaran</label>
+                        <input type="text" id="inputSubjectName" required placeholder="Contoh: Bahasa Indonesia / Matematika - Kelas XII" class="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition">
+                    </div>
+
+                    <!-- Session Inputs Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                        <!-- Sesi 1 Box -->
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+                            <div class="flex items-center justify-between border-b pb-2">
+                                <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-clock text-amber-500"></i> Sesi 1 (07:30 - 09:30)
+                                </span>
+                                <label class="inline-flex items-center cursor-pointer select-none">
+                                    <input type="checkbox" id="inputSesi1Active" checked class="sr-only peer">
+                                    <div class="relative w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                                    <span class="ms-2 text-xs font-semibold text-slate-600">Aktif</span>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-medium text-slate-500 mb-1">Link Google Form Sesi 1</label>
+                                <input type="url" id="inputSesi1Url" placeholder="https://forms.gle/..." class="w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition">
+                            </div>
+                        </div>
+
+                        <!-- Sesi 2 Box -->
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+                            <div class="flex items-center justify-between border-b pb-2">
+                                <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-clock text-indigo-500"></i> Sesi 2 (10:00 - 12:00)
+                                </span>
+                                <label class="inline-flex items-center cursor-pointer select-none">
+                                    <input type="checkbox" id="inputSesi2Active" checked class="sr-only peer">
+                                    <div class="relative w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                                    <span class="ms-2 text-xs font-semibold text-slate-600">Aktif</span>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-medium text-slate-500 mb-1">Link Google Form Sesi 2</label>
+                                <input type="url" id="inputSesi2Url" placeholder="https://forms.gle/..." class="w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-end gap-2 pt-2">
+                        <button type="button" id="cancelEditBtn" onclick="resetForm()" class="hidden px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-200 hover:bg-slate-300 rounded-xl transition">
+                            Batal
+                        </button>
+                        <button type="submit" class="px-5 py-2.5 text-xs font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-xl transition shadow-md flex items-center gap-2">
+                            <i class="fa-solid fa-floppy-disk"></i> Simpan Mata Pelajaran
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Subject Table List -->
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-slate-100 text-slate-700 text-xs uppercase font-bold">
+                            <tr>
+                                <th class="p-3">Mata Pelajaran</th>
+                                <th class="p-3 text-center">Sesi 1 (07:30 - 09:30)</th>
+                                <th class="p-3 text-center">Sesi 2 (10:00 - 12:00)</th>
+                                <th class="p-3 text-center w-28">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody" class="divide-y divide-slate-200 bg-white">
+                            <!-- Dynamic Admin rows will be rendered here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- PIN Verification Modal for Admin Access -->
+    <div id="authModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4 border border-slate-100 animate-in fade-in zoom-in duration-200">
+            <div class="text-center space-y-2">
+                <div class="w-12 h-12 bg-brand-50 text-brand-600 rounded-2xl flex items-center justify-center mx-auto text-xl">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800">Verifikasi PIN Admin</h3>
+                <p class="text-xs text-slate-500">Masukkan PIN Keamanan untuk mengakses Panel Admin.</p>
+            </div>
+
+            <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                <div>
+                    <input type="password" id="adminPinInput" maxlength="10" placeholder="PIN Admin (Default: 1234)" required class="w-full px-4 py-2.5 text-center text-lg font-mono tracking-widest bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition">
+                    <p id="authErrorMessage" class="text-red-500 text-xs text-center mt-1.5 hidden"><i class="fa-solid fa-triangle-exclamation mr-1"></i> PIN yang Anda masukkan salah!</p>
+                </div>
+                <div class="flex gap-2">
+                    <button type="button" onclick="closeAuthModal()" class="w-1/2 py-2.5 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
+                        Batal
+                    </button>
+                    <button type="submit" class="w-1/2 py-2.5 text-xs font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-xl transition shadow-md">
+                        Masuk
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Toast Message -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center space-x-3 border border-slate-700">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toastMessage" class="text-xs font-medium">Pesan notifikasi</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-12">
+        <div class="max-w-6xl mx-auto px-4 text-center space-y-1">
+            <p class="text-xs text-slate-500 font-semibold">&copy; 2026 - 2027 Tim IT SMKN 1 PLERET. All rights reserved.</p>
+            <p class="text-[11px] text-slate-400">Portal Ujian Sekolah Resmi Berbasis Sesi Daring</p>
+        </div>
+    </footer>
+
+    <script>
+        // Default initial data with Sesi 1 & Sesi 2 structure
+        const defaultSubjects = [
+            {
+                id: '1',
+                name: 'Bahasa Indonesia',
+                sesi1: { time: '07:30 - 09:30', url: 'https://forms.gle/sampleIndonesiaSesi1', active: true },
+                sesi2: { time: '10:00 - 12:00', url: 'https://forms.gle/sampleIndonesiaSesi2', active: false }
+            },
+            {
+                id: '2',
+                name: 'Matematika Terapan',
+                sesi1: { time: '07:30 - 09:30', url: 'https://forms.gle/sampleMTKSesi1', active: true },
+                sesi2: { time: '10:00 - 12:00', url: 'https://forms.gle/sampleMTKSesi2', active: true }
+            },
+            {
+                id: '3',
+                name: 'Bahasa Inggris',
+                sesi1: { time: '07:30 - 09:30', url: 'https://forms.gle/sampleInggrisSesi1', active: false },
+                sesi2: { time: '10:00 - 12:00', url: 'https://forms.gle/sampleInggrisSesi2', active: true }
+            }
+        ];
+
+        // State variables
+        let subjects = [];
+        let isAdminLoggedIn = false;
+
+        // --- Clock and Date Widget ---
+        function updateClock() {
+            const now = new Date();
+            
+            // Format Day and Date in Indonesian
+            const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = now.toLocaleDateString('id-ID', optionsDate);
+            
+            // Format Time (HH:MM:SS)
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            document.getElementById('dayWidget').textContent = formattedDate;
+            document.getElementById('clockWidget').textContent = `${hours}:${minutes}:${seconds}`;
+        }
+
+        // --- LocalStorage Manager ---
+        function loadSubjects() {
+            const stored = localStorage.getItem('smkn1_pleret_exam_sessions');
+            if (stored) {
+                try {
+                    subjects = JSON.parse(stored);
+                } catch (e) {
+                    subjects = [...defaultSubjects];
+                }
+            } else {
+                subjects = [...defaultSubjects];
+                saveSubjects();
+            }
+        }
+
+        function saveSubjects() {
+            localStorage.setItem('smkn1_pleret_exam_sessions', JSON.stringify(subjects));
+        }
+
+        // --- Render Functions ---
+        function renderUserView() {
+            const grid = document.getElementById('subjectGrid');
+            const emptyState = document.getElementById('emptyState');
+            const countBadge = document.getElementById('activeSubjectCount');
+            
+            grid.innerHTML = '';
+            
+            // Count total active sessions
+            let totalActiveSessions = 0;
+
+            subjects.forEach(subject => {
+                const isSesi1Active = subject.sesi1 && subject.sesi1.active && subject.sesi1.url;
+                const isSesi2Active = subject.sesi2 && subject.sesi2.active && subject.sesi2.url;
+
+                if (isSesi1Active || isSesi2Active) {
+                    if (isSesi1Active) totalActiveSessions++;
+                    if (isSesi2Active) totalActiveSessions++;
+
+                    const card = document.createElement('div');
+                    card.className = 'bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between space-y-4';
+                    
+                    let sessionButtonsHtml = '';
+
+                    // Sesi 1 Button Block
+                    if (isSesi1Active) {
+                        sessionButtonsHtml += `
+                            <div class="p-3.5 bg-amber-50/60 rounded-xl border border-amber-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div>
+                                    <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-[11px] font-bold">
+                                        <i class="fa-solid fa-clock"></i> Sesi 1
+                                    </div>
+                                    <p class="text-xs font-semibold text-slate-700 mt-1">07:30 - 09:30 WIB</p>
+                                </div>
+                                <a href="${escapeHtml(subject.sesi1.url)}" target="_blank" rel="noopener noreferrer" 
+                                   class="inline-flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition shadow-sm active:scale-95">
+                                    <span>Mulai Ujian</span>
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                </a>
+                            </div>
+                        `;
+                    }
+
+                    // Sesi 2 Button Block
+                    if (isSesi2Active) {
+                        sessionButtonsHtml += `
+                            <div class="p-3.5 bg-indigo-50/60 rounded-xl border border-indigo-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div>
+                                    <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-indigo-100 text-indigo-800 text-[11px] font-bold">
+                                        <i class="fa-solid fa-clock"></i> Sesi 2
+                                    </div>
+                                    <p class="text-xs font-semibold text-slate-700 mt-1">10:00 - 12:00 WIB</p>
+                                </div>
+                                <a href="${escapeHtml(subject.sesi2.url)}" target="_blank" rel="noopener noreferrer" 
+                                   class="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition shadow-sm active:scale-95">
+                                    <span>Mulai Ujian</span>
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                </a>
+                            </div>
+                        `;
+                    }
+
+                    card.innerHTML = `
+                        <div class="flex items-start space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-lg shrink-0">
+                                <i class="fa-solid fa-book-bookmark"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-base leading-snug">
+                                    ${escapeHtml(subject.name)}
+                                </h4>
+                                <p class="text-xs text-slate-400 mt-0.5">SMKN 1 PLERET - 2026/2027</p>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-2.5 pt-1">
+                            ${sessionButtonsHtml}
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                }
+            });
+
+            countBadge.textContent = `${totalActiveSessions} Sesi Ujian Aktif`;
+
+            if (totalActiveSessions === 0) {
+                emptyState.classList.remove('hidden');
+                grid.classList.add('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                grid.classList.remove('hidden');
+            }
+        }
+
+        function renderAdminTable() {
+            const tbody = document.getElementById('adminTableBody');
+            tbody.innerHTML = '';
+
+            if (subjects.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center py-6 text-slate-400 text-xs">Belum ada data mata pelajaran. Silakan tambah menggunakan form di atas.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            subjects.forEach((subject, index) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition-colors';
+                
+                const s1Active = subject.sesi1?.active ?? false;
+                const s2Active = subject.sesi2?.active ?? false;
+
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold text-slate-800">${escapeHtml(subject.name)}</td>
+                    
+                    <!-- Sesi 1 Cell -->
+                    <td class="p-3 text-center">
+                        <div class="flex items-center justify-center space-x-2">
+                            <input type="checkbox" ${s1Active ? 'checked' : ''} onchange="toggleSessionStatus(${index}, 'sesi1')" class="w-4 h-4 text-amber-600 rounded border-slate-300 focus:ring-amber-500 cursor-pointer">
+                            <span class="text-xs font-medium ${s1Active ? 'text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200' : 'text-slate-400'}">
+                                ${s1Active ? 'Aktif' : 'Non-aktif'}
+                            </span>
+                        </div>
+                    </td>
+
+                    <!-- Sesi 2 Cell -->
+                    <td class="p-3 text-center">
+                        <div class="flex items-center justify-center space-x-2">
+                            <input type="checkbox" ${s2Active ? 'checked' : ''} onchange="toggleSessionStatus(${index}, 'sesi2')" class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 cursor-pointer">
+                            <span class="text-xs font-medium ${s2Active ? 'text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200' : 'text-slate-400'}">
+                                ${s2Active ? 'Aktif' : 'Non-aktif'}
+                            </span>
+                        </div>
+                    </td>
+
+                    <td class="p-3 text-center">
+                        <div class="flex items-center justify-center space-x-2">
+                            <button onclick="editSubject(${index})" title="Edit" class="p-1.5 text-slate-500 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button onclick="deleteSubject(${index})" title="Hapus" class="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- Admin Form Handlers ---
+        function toggleSessionStatus(index, sessionKey) {
+            if (subjects[index] && subjects[index][sessionKey]) {
+                subjects[index][sessionKey].active = !subjects[index][sessionKey].active;
+                saveSubjects();
+                renderUserView();
+                renderAdminTable();
+                showToast(`Status ${sessionKey === 'sesi1' ? 'Sesi 1' : 'Sesi 2'} (${subjects[index].name}) diperbarui`);
+            }
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const editIndex = parseInt(document.getElementById('editIndex').value);
+            const name = document.getElementById('inputSubjectName').value.trim();
+            
+            const sesi1Url = document.getElementById('inputSesi1Url').value.trim();
+            const sesi1Active = document.getElementById('inputSesi1Active').checked;
+            
+            const sesi2Url = document.getElementById('inputSesi2Url').value.trim();
+            const sesi2Active = document.getElementById('inputSesi2Active').checked;
+
+            if (!name) return;
+
+            const subjectData = {
+                id: editIndex >= 0 ? subjects[editIndex].id : Date.now().toString(),
+                name: name,
+                sesi1: {
+                    time: '07:30 - 09:30',
+                    url: sesi1Url,
+                    active: sesi1Active
+                },
+                sesi2: {
+                    time: '10:00 - 12:00',
+                    url: sesi2Url,
+                    active: sesi2Active
+                }
+            };
+
+            if (editIndex >= 0) {
+                subjects[editIndex] = subjectData;
+                showToast('Mata pelajaran berhasil diperbarui');
+            } else {
+                subjects.push(subjectData);
+                showToast('Mata pelajaran berhasil ditambahkan');
+            }
+
+            saveSubjects();
+            resetForm();
+            renderUserView();
+            renderAdminTable();
+        }
+
+        function editSubject(index) {
+            const subject = subjects[index];
+            document.getElementById('editIndex').value = index;
+            document.getElementById('inputSubjectName').value = subject.name;
+            
+            document.getElementById('inputSesi1Url').value = subject.sesi1?.url || '';
+            document.getElementById('inputSesi1Active').checked = subject.sesi1?.active ?? true;
+
+            document.getElementById('inputSesi2Url').value = subject.sesi2?.url || '';
+            document.getElementById('inputSesi2Active').checked = subject.sesi2?.active ?? true;
+            
+            document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-pen-to-square text-brand-600"></i> Edit Mata Pelajaran`;
+            document.getElementById('cancelEditBtn').classList.remove('hidden');
+            
+            document.getElementById('subjectForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function deleteSubject(index) {
+            if (confirm(`Apakah Anda yakin ingin menghapus mata pelajaran "${subjects[index].name}"?`)) {
+                const name = subjects[index].name;
+                subjects.splice(index, 1);
+                saveSubjects();
+                renderUserView();
+                renderAdminTable();
+                showToast(`"${name}" telah dihapus`);
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('editIndex').value = '-1';
+            document.getElementById('inputSubjectName').value = '';
+            
+            document.getElementById('inputSesi1Url').value = '';
+            document.getElementById('inputSesi1Active').checked = true;
+
+            document.getElementById('inputSesi2Url').value = '';
+            document.getElementById('inputSesi2Active').checked = true;
+            
+            document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-plus-circle text-brand-600"></i> Tambah Mata Pelajaran Baru`;
+            document.getElementById('cancelEditBtn').classList.add('hidden');
+        }
+
+        // --- Admin Authentication Logic ---
+        function openAdminAuth() {
+            if (isAdminLoggedIn) {
+                toggleAdminModeView(false); // Switch back to user mode
+            } else {
+                document.getElementById('authModal').classList.remove('hidden');
+                document.getElementById('adminPinInput').value = '';
+                document.getElementById('authErrorMessage').classList.add('hidden');
+                setTimeout(() => document.getElementById('adminPinInput').focus(), 100);
+            }
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.add('hidden');
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const pin = document.getElementById('adminPinInput').value;
+            
+            // Default PIN Admin: 1234
+            if (pin === '1234') {
+                isAdminLoggedIn = true;
+                closeAuthModal();
+                toggleAdminModeView(true);
+                showToast('Login Admin berhasil');
+            } else {
+                document.getElementById('authErrorMessage').classList.remove('hidden');
+            }
+        }
+
+        function toggleAdminModeView(showAdmin) {
+            const adminSection = document.getElementById('adminSection');
+            const adminBtnText = document.getElementById('adminBtnText');
+
+            if (showAdmin) {
+                adminSection.classList.remove('hidden');
+                adminBtnText.textContent = 'Kembali ke Mode Siswa';
+                renderAdminTable();
+                adminSection.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                adminSection.classList.add('hidden');
+                adminBtnText.textContent = 'Mode Admin';
+                isAdminLoggedIn = false;
+            }
+        }
+
+        function logoutAdmin() {
+            toggleAdminModeView(false);
+            showToast('Telah keluar dari Mode Admin');
+        }
+
+        // --- Toast Notification Helper ---
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Helper function for HTML escaping
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>"']/g, function(m) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                }[m];
+            });
+        }
+
+        window.onload = function () {
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            loadSubjects();
+            renderUserView();
+        };
+    </script>
+</body>
+</html>
